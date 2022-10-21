@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+using namespace std;
+bool comp(pair<int,int> a,pair<int,int> b){
+    return a.second>b.second;
+}
+const int ALPHABET_SIZE = 1000;
+struct TrieNode
+{
+    struct TrieNode *children[ALPHABET_SIZE];
+    bool isEndOfWord;
+};
+  
+struct TrieNode *getNode(void)
+{
+    struct TrieNode *pNode =  new TrieNode;
+  
+    pNode->isEndOfWord = false;
+  
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        pNode->children[i] = NULL;
+  
+    return pNode;
+}
+  
+void insert(struct TrieNode *root, vector<int> key)
+{
+    struct TrieNode *pCrawl = root;
+  
+    for (int i = 0; i < key.size(); i++)
+    {
+        int index = key[i];
+        if (!pCrawl->children[index])
+            pCrawl->children[index] = getNode();
+        pCrawl = pCrawl->children[index];
+    }
+  
+    pCrawl->isEndOfWord = true;
+    cout<<"inserted"<<endl;
+}
+int main(){
+    
+    cout<<"num of transactions:";
+    int n;cin>>n;
+    cout<<"min support:";
+    int ms;cin>>ms;
+    vector<vector<int>>a;
+    for(int i=0;i<n;i++){
+      cout<<"enter no of items and items of "<<i+1<<" transaction"<<endl;
+      int x;cin>>x;
+      vector<int>xi;
+      for(int j=0;j<x;j++){
+        int k;
+        cin>>k;
+        xi.push_back(k);
+      }
+      a.push_back(xi);
+    }
+    map<int,int>mp;
+    vector<int>v;
+    int yi = 1;
+    for(int i=0;i<a.size();i++){
+      for(int j=0;j<a[i].size();j++){
+        if(mp.find(a[i][j]) == mp.end()){
+            mp[a[i][j]]++;
+            v.push_back(a[i][j]);
+        }
+        else{
+           mp[a[i][j]]++;   
+        }
+      }
+    }
+    vector<vector<pair<int,int>>>an;
+    vector<pair<int,int>>h;
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[i].size();j++){
+            if(mp[a[i][j]]>=ms){
+                    h.push_back({a[i][j],mp[a[i][j]]});
+            }
+        }
+        an.push_back(h);
+        h.clear();
+    }struct TrieNode *root = getNode();
+    vector<int>ans;
+    for(int i=0;i<an.size();i++){
+        sort(an[i].begin(),an[i].end(),comp);
+        for(int j=0;j<an[i].size();j++){
+            ans.push_back(an[i][j].first);
+        }
+        insert(root,ans);
+        ans.clear();
+        
+    }
+    return 0;
+}
